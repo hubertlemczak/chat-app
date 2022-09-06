@@ -1,7 +1,9 @@
+import React from 'react';
+
 const App = () => {
   return (
     <div>
-      <div></div>
+      <h1 className="text-red-700 text-7xl">hi</h1>
     </div>
   );
 };
