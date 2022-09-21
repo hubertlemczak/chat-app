@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const signedToken = (data, opts) => {
+const signToken = (data, opts) => {
   return jwt.sign(data, JWT_SECRET, opts);
 };
 
@@ -17,7 +17,7 @@ const hashStr = async str => {
   }
 };
 
-const compareHash = async (str, hash) => {
+const compareStringToHash = async (str, hash) => {
   try {
     return await bcrypt.compare(str, hash);
   } catch (err) {
@@ -26,4 +26,8 @@ const compareHash = async (str, hash) => {
   }
 };
 
-module.exports = { signedToken, hashStr, compareHash };
+module.exports = {
+  signToken,
+  hashStr,
+  compareStringToHash,
+};
