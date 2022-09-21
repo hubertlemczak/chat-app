@@ -7,12 +7,12 @@ async function main() {
       {
         username: 'User 1',
         email: 'user1@gmail.com',
-        password: await hashStr('p123'),
+        password: await hashStr('123'),
       },
       {
         username: 'User 2',
         email: 'user2@gmail.com',
-        password: await hashStr('p123'),
+        password: await hashStr('123'),
       },
     ],
   });
