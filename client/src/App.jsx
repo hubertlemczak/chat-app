@@ -1,55 +1,27 @@
 import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { io } from 'socket.io-client';
-const socket = io('http://localhost:4040');
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+
+import Chat from './pages/Chat';
+import Login from './pages/Login';
 
 const App = () => {
-  const [state, setState] = useState('');
-
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('connected');
-    });
-
-    socket.on('disconnect', () => {
-      console.log('disconnected');
-    });
-
-    socket.on('chat message', msg => {
-      console.log(msg);
-    });
-
-    socket.on('typing', () => {
-      console.log('typing');
-    });
-
-    return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('chat message');
-      socket.off('typing');
-    };
-  }, []);
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    socket.emit('chat message', state);
-  };
-
-  const handleChange = e => {
-    socket.emit('typing');
-    setState(e.target.value);
-  };
-
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" onChange={handleChange} value={state} />
-        <button>send</button>
-      </form>
-    </div>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route element={<Authenticate />}>
+        <Route path="/chat" element={<Chat />} />
+      </Route>
+    </Routes>
   );
+};
+
+const Authenticate = () => {
+  const token = localStorage.getItem('chat-app-token');
+  if (token) {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/" />;
+  }
 };
 
 export default App;
