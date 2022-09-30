@@ -6,12 +6,11 @@ import { CreateMessage, messagesCmdBus } from './commands/messages.command';
 
 export default function socket({ io }: { io: Server }) {
   io.on('connection', socket => {
+    console.log('a user connected');
+
     socket.on(
       'login',
-      (
-        { token }: { token: string },
-        cb: (user: string | JwtPayload | null) => void
-      ) => {
+      (token: string, cb: (user: string | JwtPayload | null) => void) => {
         const user = decodeToken(token);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (socket as any).user = user;
@@ -19,19 +18,22 @@ export default function socket({ io }: { io: Server }) {
       }
     );
 
-    console.log('a user connected');
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
 
     socket.on(
-      'chat message',
+      'chat-message',
       async ({ content, userId, conversationId }: TCreateMessage) => {
         try {
           const createdMessage = await messagesCmdBus.dispatch(
             new CreateMessage({ content, userId, conversationId })
           );
-          io.emit('chat message', createdMessage);
+
+          if (createdMessage) {
+            io.emit('chat-message', createdMessage);
+          }
+
           console.log('With Command', createdMessage);
         } catch (err) {
           console.error(err);
@@ -43,7 +45,11 @@ export default function socket({ io }: { io: Server }) {
             conversationId,
             userId,
           });
-          io.emit('chat message', createdMessage);
+
+          if (createdMessage) {
+            io.emit('chat-message', createdMessage);
+          }
+
           console.log('With model', createdMessage);
         } catch (err) {
           console.error('err', err);

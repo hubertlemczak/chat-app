@@ -16,7 +16,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     socket.on('connect', () => {
       console.log('connected');
-      socket.emit('login', { token }, decodedUser => {
+      socket.emit('login', token, decodedUser => {
         socket.user = decodedUser;
       });
     });
@@ -29,7 +29,7 @@ export const SocketProvider = ({ children }) => {
       console.log('disconnected');
     });
 
-    socket.on('chat message', msg => {
+    socket.on('chat-message', msg => {
       console.log(msg);
     });
 
@@ -40,7 +40,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       socket.off('connect');
       socket.off('disconnect');
-      socket.off('chat message');
+      socket.off('chat-message');
       socket.off('typing');
       socket.off('login');
       socket.off('connect_failed');
