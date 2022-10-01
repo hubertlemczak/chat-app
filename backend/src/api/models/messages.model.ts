@@ -1,5 +1,4 @@
 import dbClient from '../../utils/dbClient';
-import { HttpException } from '../errors';
 
 export type TCreateMessage = {
   content: string;
@@ -7,11 +6,7 @@ export type TCreateMessage = {
   conversationId: string;
 };
 
-const getAll = async () => {
-  const data = await dbClient.message.findMany({});
-
-  return data;
-};
+const getAll = async () => await dbClient.message.findMany({});
 
 const getById = async (id: string) => {
   const data = await dbClient.message.findUnique({
@@ -33,7 +28,11 @@ const createMessage = async ({
       userId,
     },
     include: {
-      user: true,
+      user: {
+        select: {
+          username: true,
+        },
+      },
     },
   });
 

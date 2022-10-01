@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import client from '../client';
 import { useLoggedInUser } from '../context/LoggedInUser';
 
@@ -16,14 +17,18 @@ const Login = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    try {
+      const data = await client.post('/login', {
+        usernameOrEmail: loginForm.usernameOrEmail,
+        password: loginForm.password,
+      });
 
-    const data = await client.post('/login', {
-      usernameOrEmail: loginForm.usernameOrEmail,
-      password: loginForm.password,
-    });
+      const token = data.data.token;
 
-    const token = data.data.token;
-    setToken(token);
+      setToken(token);
+    } catch (error) {
+      console.error(error.response);
+    }
   };
 
   return (

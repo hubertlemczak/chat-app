@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useLoggedInUser } from '../context/LoggedInUser';
 
 import { useSocket } from '../context/SocketProvider';
 
 const Chat = () => {
   const [chatInput, setChatInput] = useState('');
+  const { user } = useLoggedInUser();
   const { socket } = useSocket();
 
   const handleSubmit = e => {
@@ -11,7 +13,7 @@ const Chat = () => {
     socket.emit('chat-message', {
       content: chatInput,
       conversationId: '4c840108-35ff-472f-811a-3c379a928b6a',
-      userId: socket.user.id,
+      userId: user.id,
     });
   };
 

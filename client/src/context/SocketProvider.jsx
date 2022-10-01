@@ -1,51 +1,69 @@
 import { useEffect } from 'react';
 import { useContext } from 'react';
+import { useState } from 'react';
 import { createContext } from 'react';
 import { io } from 'socket.io-client';
+import { useLoggedInUser } from './LoggedInUser';
 
-import useLocalStorage from '../hooks/useLocalStorage';
-
-const socket = io('http://localhost:4040');
-
-const SocketContext = createContext({ socket });
+const SocketContext = createContext({});
 export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }) => {
-  const [token] = useLocalStorage('chat-app-token', '');
+  const [socket, setSocket] = useState();
+  const { token } = useLoggedInUser();
 
   useEffect(() => {
-    socket.on('connect', () => {
+    const newSocket = io('http://localhost:4040', {
+      auth: {
+        token,
+      },
+      autoConnect: false,
+    });
+
+    if (token) {
+      newSocket.connect();
+    }
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
       console.log('connected');
-      socket.emit('login', token, decodedUser => {
-        socket.user = decodedUser;
-      });
     });
 
-    socket.on('connect_failed', () => {
-      console.log('whoops');
+    newSocket.onAny((event, ...args) => {
+      console.log(event, args);
     });
 
-    socket.on('disconnect', () => {
+    newSocket.on('exception', err => {
+      console.log('error', err);
+    });
+
+    newSocket.on('disconnect', () => {
       console.log('disconnected');
     });
 
-    socket.on('chat-message', msg => {
+    newSocket.on('chat-message', msg => {
       console.log(msg);
     });
 
-    socket.on('typing', () => {
+    newSocket.on('typing', () => {
       console.log('typing');
     });
 
+    newSocket.on('connect_error', err => {
+      console.error(err.message);
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('chat-message');
-      socket.off('typing');
-      socket.off('login');
-      socket.off('connect_failed');
+      newSocket.off('connect');
+      newSocket.off('disconnect');
+      newSocket.off('connect_error');
+      newSocket.off('exception');
+      newSocket.off('login');
+      newSocket.off('typing');
+      newSocket.off('chat-message');
+      newSocket.disconnect();
     };
-  }, [socket, token]);
+  }, [token]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

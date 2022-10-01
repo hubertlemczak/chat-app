@@ -10,6 +10,8 @@ export const signToken = (data: any) => jwt.sign(data, JWT_SECRET);
 
 export const decodeToken = (token: string) => jwt.decode(token);
 
+export const verifyToken = (token: string) => jwt.verify(token, JWT_SECRET);
+
 export const hashStr = async (str: string) => {
   try {
     return await bcrypt.hash(str, 10);

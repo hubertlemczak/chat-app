@@ -4,10 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dbClient_1 = __importDefault(require("../../utils/dbClient"));
-const getAll = async () => {
-    const data = await dbClient_1.default.message.findMany({});
-    return data;
-};
+const getAll = async () => await dbClient_1.default.message.findMany({});
 const getById = async (id) => {
     const data = await dbClient_1.default.message.findUnique({
         where: { id },
@@ -22,7 +19,11 @@ const createMessage = async ({ content, userId, conversationId, }) => {
             userId,
         },
         include: {
-            user: true,
+            user: {
+                select: {
+                    username: true,
+                },
+            },
         },
     });
     return data;

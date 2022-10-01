@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.compareStringToHash = exports.hashStr = exports.decodeToken = exports.signToken = void 0;
+exports.compareStringToHash = exports.hashStr = exports.verifyToken = exports.decodeToken = exports.signToken = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -14,6 +14,8 @@ const signToken = (data) => jsonwebtoken_1.default.sign(data, JWT_SECRET);
 exports.signToken = signToken;
 const decodeToken = (token) => jsonwebtoken_1.default.decode(token);
 exports.decodeToken = decodeToken;
+const verifyToken = (token) => jsonwebtoken_1.default.verify(token, JWT_SECRET);
+exports.verifyToken = verifyToken;
 const hashStr = async (str) => {
     try {
         return await bcrypt_1.default.hash(str, 10);
