@@ -5,7 +5,7 @@ import { compareStringToHash, signToken } from '../../auth/index.js';
 
 const login = async (req: Request, res: Response) => {
   const user = await validateCredentials(req.body);
-  const token = await signToken(user);
+  const token = signToken(user);
 
   res.status(200).json({ token });
 };

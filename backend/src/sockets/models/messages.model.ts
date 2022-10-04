@@ -1,10 +1,5 @@
+import { TCreateMessage } from '../../types/messages';
 import dbClient from '../../utils/dbClient';
-
-export type TCreateMessage = {
-  content: string;
-  userId: string;
-  conversationId: string;
-};
 
 const getAll = async () => await dbClient.message.findMany({});
 

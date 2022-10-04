@@ -1,8 +1,9 @@
 import { Server } from 'socket.io';
-import messagesModel, { TCreateMessage } from '../../api/models/messages.model';
+import model from '../models/messages.model';
 import { TSocketWithUser } from '../../types/socket';
+import { TCreateMessage } from '../../types/messages';
 
-const messageHandler = (socket: TSocketWithUser, io: Server) => {
+const messagesHandler = (socket: TSocketWithUser, io: Server) => {
   const createMessage = async ({
     content,
     userId,
@@ -10,7 +11,7 @@ const messageHandler = (socket: TSocketWithUser, io: Server) => {
   }: TCreateMessage) => {
     try {
       console.log(socket.user);
-      const createdMessage = await messagesModel.createMessage({
+      const createdMessage = await model.createMessage({
         content,
         conversationId,
         userId,
@@ -38,4 +39,4 @@ const messageHandler = (socket: TSocketWithUser, io: Server) => {
   socket.on('typing', handleTyping);
 };
 
-export default messageHandler;
+export default messagesHandler;

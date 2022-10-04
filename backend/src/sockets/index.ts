@@ -2,7 +2,7 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 import { Server } from 'socket.io';
 import { verifyToken } from '../auth';
 import { TSocketWithUser, TDecodedUser } from '../types/socket';
-import messageHandler from './handlers/message.handler';
+import messagesHandler from './handlers/messages.handler';
 
 export default function sockets({ io }: { io: Server }) {
   io.use((socket: TSocketWithUser, next) => {
@@ -23,7 +23,7 @@ export default function sockets({ io }: { io: Server }) {
   const onConnection = (socket: TSocketWithUser) => {
     console.log('a user connected');
 
-    messageHandler(socket, io);
+    messagesHandler(socket, io);
 
     socket.on('disconnect', () => {
       console.log('user disconnected');
