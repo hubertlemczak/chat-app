@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import client from '../client';
 import { useLoggedInUser } from '../context/LoggedInUser';
@@ -10,6 +11,8 @@ const Login = () => {
   });
   const { setToken } = useLoggedInUser();
 
+  const navigate = useNavigate();
+
   const handleChange = e => {
     const { name, value } = e.target;
     setLoginForm(prev => ({ ...prev, [name]: value }));
@@ -17,6 +20,7 @@ const Login = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
     try {
       const data = await client.post('/login', {
         usernameOrEmail: loginForm.usernameOrEmail,
@@ -25,7 +29,9 @@ const Login = () => {
 
       const token = data.data.token;
 
+      localStorage.setItem('chat-app-token', token);
       setToken(token);
+      navigate('/');
     } catch (error) {
       console.error(error.response);
     }
@@ -37,14 +43,12 @@ const Login = () => {
         <input
           type="text"
           name="usernameOrEmail"
-          id="usernameOrEmail"
           value={loginForm.usernameOrEmail}
           onChange={handleChange}
         />
         <input
           type="password"
           name="password"
-          id="password"
           value={loginForm.password}
           onChange={handleChange}
         />
