@@ -1,18 +1,42 @@
 import { Request, Response } from 'express';
 
 import dbClient from '../../utils/dbClient';
-import { compareStringToHash, signToken } from '../../auth/index.js';
+import { compareStringToHash, hashStr, signToken } from '../../auth';
+import model from '../models/auth.model';
+import { HttpException } from '../errors';
+import { TRegisterArgs } from '../types/auth';
+
+type validateCredentialsArgs = {
+  usernameOrEmail: string;
+  password: string;
+};
 
 const login = async (req: Request, res: Response) => {
   const user = await validateCredentials(req.body);
   const token = signToken(user);
 
-  res.status(200).json({ token });
+  res.status(201).json({ token });
 };
 
-type validateCredentialsArgs = {
-  usernameOrEmail: string;
-  password: string;
+const register = async (req: Request, res: Response) => {
+  const { username, email, password } = req.body as TRegisterArgs;
+
+  if (!username || !email || !password) {
+    throw new HttpException(400, 'Missing fields in request body');
+  }
+
+  const hashedPassword = await hashStr(password);
+  const userDetails = { username, email, password: hashedPassword };
+
+  const user = await model.register(userDetails);
+
+  const token = signToken({
+    id: user?.id,
+    username: user?.username,
+    email: user?.email,
+  });
+
+  res.status(201).json({ token });
 };
 
 const validateCredentials = async ({
@@ -20,7 +44,7 @@ const validateCredentials = async ({
   password,
 }: validateCredentialsArgs) => {
   if (!usernameOrEmail || !password) {
-    throw Error('Missing fields in request body');
+    throw new HttpException(400, 'Missing fields in request body');
   }
 
   const username = usernameOrEmail.includes('@') ? undefined : usernameOrEmail;
@@ -32,10 +56,10 @@ const validateCredentials = async ({
 
   const isValid = await compareStringToHash(password, user?.password);
   if (!isValid) {
-    throw Error('Invalid credentials');
+    throw new HttpException(403, 'Invalid credentials');
   }
 
   return { id: user?.id, username: user?.username, email: user?.email };
 };
 
-export default { login };
+export default { login, register };
