@@ -17,7 +17,7 @@ const messagesHandler = (socket: TSocketWithUser, io: Server) => {
       });
 
       if (createdMessage) {
-        io.emit('chat-message', createdMessage);
+        io.to(conversationId).emit('chat-message', createdMessage);
       }
     } catch (err) {
       socket.emit('exception', err);
@@ -25,9 +25,9 @@ const messagesHandler = (socket: TSocketWithUser, io: Server) => {
     }
   };
 
-  const handleTyping = () => {
+  const handleTyping = ({ conversationId }: { conversationId: string }) => {
     try {
-      socket.broadcast.emit('typing', socket.user?.username);
+      socket.broadcast.to(conversationId).emit('typing', socket.user?.username);
     } catch (err) {
       socket.emit('exception', err);
       console.error('err', err);

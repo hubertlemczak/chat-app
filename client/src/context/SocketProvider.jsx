@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (!token) return;
-    socket.auth.token = token;
+    socket.auth = { token };
     socket.connect();
 
     socket.on('connect', () => {
@@ -42,6 +42,9 @@ export const SocketProvider = ({ children }) => {
 
     socket.on('connect_error', err => {
       console.error(err.message);
+      if (err.message === 'invalid token') {
+        localStorage.setItem('chat-app-token', '');
+      }
     });
 
     return () => {

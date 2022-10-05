@@ -1,7 +1,15 @@
 import React from 'react';
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+import {
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
+import { useLoggedInUser } from './context/LoggedInUser';
 
-import Chat from './pages/Chat';
+import Chat from './pages/chat/Chat';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -19,11 +27,17 @@ const App = () => {
 
 const Authenticate = () => {
   const token = localStorage.getItem('chat-app-token');
-  if (token) {
-    return <Outlet />;
-  } else {
-    return <Navigate to="/login" />;
-  }
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token && location.pathname !== '/register') {
+      navigate('/login');
+    }
+  }, [token]);
+
+  return token && <Outlet />;
 };
 
 export default App;

@@ -25,7 +25,20 @@ async function main() {
     },
   });
 
-  const convo = await dbClient.conversation.create({
+  const user3 = await dbClient.user.create({
+    data: {
+      username: 'User 3',
+      email: 'user3@gmail.com',
+      password,
+      following: {
+        connect: {
+          id: user1.id,
+        },
+      },
+    },
+  });
+
+  await dbClient.conversation.create({
     data: {
       name: 'Convo 1',
       chatrooms: {
@@ -48,13 +61,32 @@ async function main() {
         },
       },
     },
-    include: {
-      chatrooms: true,
-      messages: true,
-    },
   });
 
-  console.log(JSON.stringify({ user1, user2, convo }, null, 2));
+  await dbClient.conversation.create({
+    data: {
+      name: 'Convo 2',
+      chatrooms: {
+        createMany: {
+          data: [{ userId: user1.id }, { userId: user3.id }],
+        },
+      },
+      messages: {
+        createMany: {
+          data: [
+            {
+              content: 'Huss 1',
+              userId: user1.id,
+            },
+            {
+              content: 'Huss 2',
+              userId: user3.id,
+            },
+          ],
+        },
+      },
+    },
+  });
 }
 
 main()

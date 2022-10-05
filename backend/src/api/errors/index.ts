@@ -1,5 +1,9 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import {
+  NotFoundError,
+  PrismaClientKnownRequestError,
+} from '@prisma/client/runtime';
 import { Request, Response, NextFunction } from 'express';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 const errorHandler = (
   err: Error,
@@ -19,7 +23,12 @@ const errorHandler = (
         .json({ error: `${err?.meta?.target} already in use` });
     }
   }
-
+  if (err instanceof NotFoundError) {
+    return res.status(404).json({ error: err.message });
+  }
+  if (err instanceof JsonWebTokenError) {
+    return res.status(403).json({ error: err.message });
+  }
   next(err);
   return res.sendStatus(500);
 };

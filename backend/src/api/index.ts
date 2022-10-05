@@ -2,8 +2,10 @@ import express from 'express';
 
 const api = express.Router();
 
-import userController from './controllers/users.controller';
+import usersController from './controllers/users.controller';
 import authController from './controllers/auth.controller';
+import messagesController from './controllers/messages.controller';
+import conversationsController from './controllers/conversations.controller';
 import { authenticateUser } from '../auth';
 
 // auth
@@ -11,19 +13,32 @@ api.post('/login', authController.login);
 api.post('/register', authController.register);
 
 // users
-api.get('/users', authenticateUser, userController.getAll);
-api.get('/users/:id', authenticateUser, userController.getById);
+api.get('/users', authenticateUser, usersController.getAll);
+api.get('/users/:id', authenticateUser, usersController.getById);
 
 api.patch(
   '/users/:id/follows/:followId',
   authenticateUser,
-  userController.createFollow
+  usersController.createFollow
 );
 
 api.delete(
   '/users/:id/follows/:followId',
   authenticateUser,
-  userController.deleteFollow
+  usersController.deleteFollow
+);
+
+// messages
+
+api.get('/messages', authenticateUser, messagesController.getAll);
+
+// conversations
+
+api.get('/conversations', authenticateUser, conversationsController.getAll);
+api.get(
+  '/conversations/:id',
+  authenticateUser,
+  conversationsController.getById
 );
 
 export default api;
