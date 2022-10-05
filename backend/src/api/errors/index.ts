@@ -1,7 +1,8 @@
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { Request, Response, NextFunction } from 'express';
 
 const errorHandler = (
-  err: HttpException,
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
@@ -10,6 +11,13 @@ const errorHandler = (
   console.error('[error]', err);
   if (err instanceof HttpException) {
     return res.status(err.status).json({ error: err.message });
+  }
+  if (err instanceof PrismaClientKnownRequestError) {
+    if (err.code === 'P2002') {
+      return res
+        .status(400)
+        .json({ error: `${err?.meta?.target} already in use` });
+    }
   }
 
   next(err);
