@@ -9,59 +9,48 @@ const SocketContext = createContext({});
 export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState();
   const { token } = useLoggedInUser();
-
-  useEffect(() => {
-    const newSocket = io('http://localhost:4040', {
+  const [socket] = useState(() =>
+    io('http://localhost:4040', {
       auth: {
         token,
       },
       autoConnect: false,
-    });
+    })
+  );
 
-    if (token) {
-      newSocket.connect();
-    }
-    setSocket(newSocket);
+  useEffect(() => {
+    if (!token) return;
+    socket.auth.token = token;
+    socket.connect();
 
-    newSocket.on('connect', () => {
+    socket.on('connect', () => {
       console.log('connected');
     });
 
-    newSocket.onAny((event, ...args) => {
+    socket.onAny((event, ...args) => {
       console.log(event, args);
     });
 
-    newSocket.on('exception', err => {
+    socket.on('exception', err => {
       console.log('error', err);
     });
 
-    newSocket.on('disconnect', () => {
+    socket.on('disconnect', () => {
       console.log('disconnected');
     });
 
-    newSocket.on('chat-message', msg => {
-      console.log(msg);
-    });
-
-    newSocket.on('typing', () => {
-      console.log('typing');
-    });
-
-    newSocket.on('connect_error', err => {
+    socket.on('connect_error', err => {
       console.error(err.message);
     });
 
     return () => {
-      newSocket.off('connect');
-      newSocket.off('disconnect');
-      newSocket.off('connect_error');
-      newSocket.off('exception');
-      newSocket.off('login');
-      newSocket.off('typing');
-      newSocket.off('chat-message');
-      newSocket.disconnect();
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('connect_error');
+      socket.off('exception');
+      socket.offAny();
+      socket.disconnect();
     };
   }, [token]);
 
