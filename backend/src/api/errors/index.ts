@@ -8,16 +8,19 @@ const errorHandler = (
 ) => {
   console.log('in error handler');
   console.error('[error]', err);
-  next();
+  if (err instanceof HttpException) {
+    return res.status(err.status).json({ error: err.message });
+  }
+
+  next(err);
+  return res.sendStatus(500);
 };
 
 export class HttpException extends Error {
   status: number;
-  message: string;
   constructor(status: number, message: string) {
     super(message);
     this.status = status;
-    this.message = message;
   }
 }
 
