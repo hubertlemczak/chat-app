@@ -1,7 +1,8 @@
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { Server } from 'socket.io';
+import { TDecodedUser } from '../api/types/auth';
 import { verifyToken } from '../auth';
-import { TSocketWithUser, TDecodedUser } from '../types/socket';
+import { TSocketWithUser } from '../types/socket';
 import messagesHandler from './handlers/messages.handler';
 
 export default function sockets({ io }: { io: Server }) {

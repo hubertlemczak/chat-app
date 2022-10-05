@@ -10,7 +10,6 @@ const messagesHandler = (socket: TSocketWithUser, io: Server) => {
     conversationId,
   }: TCreateMessage) => {
     try {
-      console.log(socket.user);
       const createdMessage = await model.createMessage({
         content,
         conversationId,
@@ -28,7 +27,7 @@ const messagesHandler = (socket: TSocketWithUser, io: Server) => {
 
   const handleTyping = () => {
     try {
-      socket.broadcast.emit('typing');
+      socket.broadcast.emit('typing', socket.user?.username);
     } catch (err) {
       socket.emit('exception', err);
       console.error('err', err);
