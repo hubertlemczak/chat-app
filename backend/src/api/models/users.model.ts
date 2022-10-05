@@ -20,10 +20,54 @@ const getById = async (id: string) => {
       chatrooms: {
         include: { conversation: true },
       },
+      following: {
+        select: {
+          username: true,
+          id: true,
+        },
+      },
     },
   });
 
   return data;
 };
 
-export default { getById, getAll };
+const createFollow = async (userId: string, followId: string) => {
+  const data = await dbClient.user.update({
+    where: { id: userId },
+    data: {
+      following: {
+        connect: {
+          id: followId,
+        },
+      },
+    },
+    select: {
+      following: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
+  });
+
+  return data.following[0];
+};
+
+const deleteFollow = async (userId: string, followId: string) => {
+  const data = await dbClient.user.update({
+    where: { id: userId },
+    data: {
+      following: {
+        disconnect: {
+          id: followId,
+        },
+      },
+    },
+  });
+
+  return data;
+};
+
+export default { getById, getAll, deleteFollow, createFollow };

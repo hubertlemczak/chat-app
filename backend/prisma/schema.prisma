@@ -23,6 +23,8 @@ model User {
   updatedAt DateTime   @updatedAt
   messages  Message[]
   chatrooms Chatroom[]
+  followers User[]     @relation("follows")
+  following User[]     @relation("follows")
 }
 
 model Chatroom {
