@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon dist/index.js",
-    "dev": "tsnd --respawn src/index.ts"
+    "start": "node dist/src",
+    "dev": "tsnd --respawn src/index.ts",
+    "build": "npx tsc"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
