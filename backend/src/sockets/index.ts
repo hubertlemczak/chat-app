@@ -1,5 +1,5 @@
 import { NotFoundError } from '@prisma/client/runtime';
-import { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
+import { JsonWebTokenError } from 'jsonwebtoken';
 import { Server } from 'socket.io';
 
 import { TDecodedUser } from '../api/types/auth';

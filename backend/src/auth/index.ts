@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { NextFunction, Response } from 'express';
 import { HttpException } from '../api/errors';
 import dbClient from '../utils/dbClient';
-import { TDecodedUser, TRequestWithUser, TUser } from '../api/types/auth';
+import { TDecodedUser, TRequestWithUser } from '../api/types/auth';
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
