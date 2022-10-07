@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/src",
     "dev": "tsnd --respawn src/index.ts",
-    "build": "npx tsc"
+    "build": "npx -p typescript tsc"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
