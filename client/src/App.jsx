@@ -7,7 +7,6 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import { useLoggedInUser } from './context/LoggedInUser';
 
 import Chat from './pages/chat/Chat';
 import Login from './pages/Login';

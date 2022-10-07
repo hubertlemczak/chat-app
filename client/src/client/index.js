@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const host = 'http://localhost:4040/api';
+const host = 'https://chat-app-3ql0.onrender.com/api/';
 
 const client = {
   get: path => {

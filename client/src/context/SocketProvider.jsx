@@ -11,7 +11,7 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketProvider = ({ children }) => {
   const { token } = useLoggedInUser();
   const [socket] = useState(() =>
-    io('http://localhost:4040', {
+    io('https://chat-app-3ql0.onrender.com', {
       auth: {
         token,
       },
