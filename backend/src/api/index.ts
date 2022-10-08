@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 const api = express.Router();
 
@@ -7,6 +7,10 @@ import authController from './controllers/auth.controller';
 import messagesController from './controllers/messages.controller';
 import conversationsController from './controllers/conversations.controller';
 import { authenticateUser } from '../auth';
+
+api.get('/health-check', (req: Request, res: Response) => {
+  res.sendStatus(200);
+});
 
 // auth
 api.post('/login', authController.login);

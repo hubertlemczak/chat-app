@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 require('express-async-errors');
 import cors from 'cors';
 import morgan from 'morgan';
@@ -15,7 +15,7 @@ const app: Express = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:3000', 'https://raychat.netlify.app'],
+    origin: ['http://localhost:*', 'https://raychat.netlify.app:*'],
   },
 });
 
@@ -26,9 +26,6 @@ app.use(cors());
 app.use(morgan('dev'));
 
 app.use('/api', api);
-app.get('/', (req: Request, res: Response) => {
-  res.status(200).json({ message: 'hi' });
-});
 
 app.use(errorHandler);
 
