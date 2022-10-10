@@ -13,11 +13,6 @@ import sockets from './sockets';
 
 const app: Express = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: ['http://localhost:*', 'https://raychat.netlify.app'],
-  },
-});
 
 app.disable('x-powered-by');
 
@@ -28,6 +23,12 @@ app.use(morgan('dev'));
 app.use('/api', api);
 
 app.use(errorHandler);
+
+const io = new Server(server, {
+  cors: {
+    origin: ['http://localhost:*', 'https://raychat.netlify.app'],
+  },
+});
 
 const port = process.env.PORT || 4040;
 
